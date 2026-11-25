@@ -8,6 +8,91 @@ import {
 } from "lucide-react";
 
 const money = (value) => `₱${Number(value || 0).toLocaleString("en-PH", { minimumFractionDigits: 2 })}`;
+const menuPhotos = {
+  "golden latte": "coffee-latte.jpg",
+  "honey oat flat white": "honey-oat-flat-white.jpg",
+  "berry matcha": "matcha.jpg",
+  "sea salt cookie": "cookie.jpg",
+  "ube latte": "ube-latte.jpg",
+  "almond croissant": "croissant.jpg",
+  americano: "coffee-cup.jpg",
+  cappuccino: "cappuccino.jpg",
+  "dark mocha": "dark-mocha.jpg",
+  "milk matcha": "milk-matcha.jpg",
+  "sourdough toast": "sourdough.jpg",
+  "avocado toast": "avocado-toast.jpg",
+  "herb croissant": "herb-croissant.jpg",
+  "mushroom melt": "mushroom-melt.jpg",
+  "cheddar toastie": "cheddar-toastie.jpg",
+  "olive focaccia": "olive-focaccia.jpg",
+  "banana oat loaf": "banana-oat-loaf.jpg",
+  "ham croissant": "ham-croissant.jpg",
+  "fresh milk": "milk.jpg",
+  "honey milk": "honey-milk.jpg",
+  "cocoa milk": "cocoa-milk.jpg",
+  "strawberry milk": "strawberry-milk.jpg"
+};
+
+function menuPhotoFor(item) {
+  const name = item.name.toLowerCase();
+  if (menuPhotos[name]) return `/images/menu/${menuPhotos[name]}`;
+  if (name.includes("matcha") || item.category === "Tea & Matcha") return "/images/menu/matcha.jpg";
+  if (name.includes("cookie")) return "/images/menu/cookie.jpg";
+  if (name.includes("croissant")) return "/images/menu/croissant.jpg";
+  if (name.includes("milk") || item.category === "Milk Drinks") return "/images/menu/milk.jpg";
+  if (/toast|melt|focaccia|loaf/.test(name) || item.category === "Bread & Savory") return "/images/menu/sourdough.jpg";
+  return "/images/menu/coffee-latte.jpg";
+}
+
+function MenuPhoto({ item, alt = "", className = "" }) {
+  const [failed, setFailed] = useState(false);
+  return <div className={`menu-item-photo ${className}`} aria-hidden={alt ? undefined : "true"}>
+    {failed
+      ? <span aria-hidden="true">{item.image || "☕"}</span>
+      : <img src={menuPhotoFor(item)} alt={alt} loading="lazy" decoding="async" onError={() => setFailed(true)} />}
+  </div>;
+}
+
+function CupIllustration() {
+  return <svg className="cup-illustration" viewBox="0 0 200 180" role="img" aria-label="Illustration of a warm cup of coffee">
+    <defs>
+      <linearGradient id="cup-body" x1="0" x2="1" y1="0" y2="1">
+        <stop offset="0" stopColor="#fffdf7" />
+        <stop offset="1" stopColor="#e9ddc9" />
+      </linearGradient>
+      <linearGradient id="cup-saucer" x1="0" x2="1" y1="0" y2="1">
+        <stop offset="0" stopColor="#e6d9ee" />
+        <stop offset="1" stopColor="#a992bd" />
+      </linearGradient>
+      <linearGradient id="coffee" x1="0" x2="0.9" y1="0" y2="1">
+        <stop offset="0" stopColor="#82543c" />
+        <stop offset="1" stopColor="#4a2d23" />
+      </linearGradient>
+      <filter id="cup-shadow" x="-30%" y="-30%" width="160%" height="180%">
+        <feDropShadow dx="0" dy="5" stdDeviation="4" floodColor="#4c3825" floodOpacity=".2" />
+      </filter>
+    </defs>
+    <g fill="none" stroke="#fff9ec" strokeLinecap="round" strokeWidth="5" opacity=".8">
+      <path d="M75 26c-9-10 8-12 0-22" />
+      <path d="M100 25c-9-10 8-12 0-22" />
+      <path d="M125 26c-9-10 8-12 0-22" />
+    </g>
+    <g filter="url(#cup-shadow)">
+      <ellipse cx="101" cy="148" rx="70" ry="15" fill="url(#cup-saucer)" />
+      <ellipse cx="101" cy="145" rx="57" ry="9" fill="#f8f2f8" />
+      <path d="M147 66h11c18 0 25 10 25 23s-9 24-25 24h-13" fill="none" stroke="#f6eee5" strokeWidth="13" />
+      <path d="M150 74h8c10 0 15 5 15 15s-6 15-15 15h-9" fill="none" stroke="#a78eb6" strokeWidth="7" />
+      <path d="M43 57h113l-10 66c-2 12-15 20-46 20s-44-8-46-20z" fill="url(#cup-body)" stroke="#d5c6b4" strokeWidth="2" />
+      <ellipse cx="99.5" cy="58" rx="57" ry="15" fill="#f7f0e5" stroke="#d5c6b4" strokeWidth="2" />
+      <ellipse cx="99.5" cy="58" rx="47" ry="10" fill="url(#coffee)" />
+      <path d="M79 58c8-7 14 7 22 0s14-7 21 0" fill="none" stroke="#d4ae7f" strokeLinecap="round" strokeWidth="2.5" opacity=".9" />
+      <path d="M54 77c3 23 5 38 8 44" fill="none" stroke="#fff" strokeLinecap="round" strokeWidth="4" opacity=".7" />
+      <ellipse cx="99.5" cy="147" rx="38" ry="5" fill="#d2c2d9" opacity=".75" />
+    </g>
+    <path d="M70 157c18 9 44 10 62 0" fill="none" stroke="#fff9ec" strokeLinecap="round" strokeWidth="3" opacity=".8" />
+  </svg>;
+}
+
 const demoMenu = [
   { _id: "m1", name: "Golden Latte", category: "Coffee", price: 185, description: "A smooth espresso latte with just a hint of brown-butter sweetness.", available: true, image: "☕" },
   { _id: "m2", name: "Honey Oat Flat White", category: "Coffee", price: 175, description: "Double espresso, silky oat milk, and a delicate touch of honey.", available: true, image: "🥛" },
@@ -178,6 +263,7 @@ function App() {
   const [customerNotice, setCustomerNotice] = useState("");
   const [cart, setCart] = useState({});
   const [customerBusy, setCustomerBusy] = useState(false);
+  const [pendingOrderItemId, setPendingOrderItemId] = useState(null);
 
   useEffect(() => {
     async function initialize() {
@@ -237,6 +323,36 @@ function App() {
     }).catch((error) => setCustomerNotice(error.message));
   }, [user, demoMode]);
 
+  function orderMenuItem(item) {
+    if (!item.available) return;
+    if (user?.role === "customer") {
+      setCart((previous) => ({ ...previous, [item._id]: Math.min(50, Number(previous[item._id] || 0) + 1) }));
+      setCustomerNotice(`${item.name} was added to your takeaway bag.`);
+      setView("customer");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+    setPendingOrderItemId(item._id);
+    setAuthAudience("customer");
+    setAuthMode("login");
+    setAuthError("");
+    setView("auth");
+  }
+
+  function finishCustomerSignIn(sessionUser) {
+    setUser(sessionUser);
+    setCustomerOrders(demoMode ? readDemoOrders(sessionUser.id) : []);
+    if (pendingOrderItemId) {
+      const item = publicMenu.find((menuItem) => menuItem._id === pendingOrderItemId);
+      if (item?.available) {
+        setCart((previous) => ({ ...previous, [item._id]: Math.min(50, Number(previous[item._id] || 0) + 1) }));
+        setCustomerNotice(`${item.name} was added to your takeaway bag.`);
+      }
+      setPendingOrderItemId(null);
+    }
+    setView("customer");
+  }
+
   async function submitAuth(event) {
     event.preventDefault();
     setAuthError("");
@@ -261,6 +377,7 @@ function App() {
             email: demoStaffCredentials.email,
             role: "staff"
           });
+          setPendingOrderItemId(null);
           setUser(staffUser);
           setView("dashboard");
           return;
@@ -290,9 +407,7 @@ function App() {
           demoUser = account;
         }
         const sessionUser = saveDemoSession(demoUser);
-        setUser(sessionUser);
-        setCustomerOrders(readDemoOrders(sessionUser.id));
-        setView("customer");
+        finishCustomerSignIn(sessionUser);
         return;
       }
       const response = await fetch(`/api/auth/${authMode}`, {
@@ -313,8 +428,12 @@ function App() {
         throw new Error(result.message || "The cafe server couldn't complete your request. Check that the API and MongoDB are running, then try again.");
       }
       if (!result.user) throw new Error("The cafe server response was incomplete. Please try again.");
-      setUser(result.user);
-      setView(result.user.role === "staff" ? "dashboard" : "customer");
+      if (result.user.role === "customer") finishCustomerSignIn(result.user);
+      else {
+        setPendingOrderItemId(null);
+        setUser(result.user);
+        setView("dashboard");
+      }
     } catch (error) {
       setAuthError(error.message === "Failed to fetch"
         ? "The cafe server isn't connected yet. Refresh the page to start browser-only demo mode."
@@ -328,6 +447,7 @@ function App() {
     setUser(null);
     setView("home");
     setCart({});
+    setPendingOrderItemId(null);
     setCustomerOrders([]);
   }
 
@@ -448,7 +568,7 @@ function App() {
     error={authError}
     busy={authBusy}
     onSubmit={submitAuth}
-    onHome={() => { setView("home"); setAuthError(""); }}
+    onHome={() => { setPendingOrderItemId(null); setView("home"); setAuthError(""); }}
   />;
   if (view === "menu") return <PublicMenu
     menuItems={publicMenu}
@@ -462,18 +582,20 @@ function App() {
       }));
     }}
     signedIn={user?.role === "customer"}
-    onLogin={() => { if (user?.role === "customer") setView("customer"); else { setAuthMode("login"); setAuthError(""); setView("auth"); } }}
+    onOrderItem={orderMenuItem}
+    onLogin={() => { if (user?.role === "customer") setView("customer"); else { setPendingOrderItemId(null); setAuthMode("login"); setAuthError(""); setView("auth"); } }}
   />;
   return <PublicHome
     menuItems={publicMenu}
     signedIn={user?.role === "customer"}
+    onOrderItem={orderMenuItem}
     onMenu={() => { setMenuCategory("All"); setView("menu"); window.scrollTo({ top: 0, behavior: "smooth" }); }}
-    onLogin={() => { if (user?.role === "customer") setView("customer"); else { setAuthMode("login"); setAuthError(""); setView("auth"); } }}
-    onRegister={() => { if (user?.role === "customer") setView("customer"); else { setAuthMode("register"); setAuthError(""); setView("auth"); } }}
+    onLogin={() => { if (user?.role === "customer") setView("customer"); else { setPendingOrderItemId(null); setAuthMode("login"); setAuthError(""); setView("auth"); } }}
+    onRegister={() => { if (user?.role === "customer") setView("customer"); else { setPendingOrderItemId(null); setAuthMode("register"); setAuthError(""); setView("auth"); } }}
   />;
 }
 
-function PublicHome({ menuItems, onMenu, onLogin, onRegister, signedIn = false }) {
+function PublicHome({ menuItems, onMenu, onLogin, onRegister, onOrderItem, signedIn = false }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [zoomItem, setZoomItem] = useState(null);
   const availableItems = menuItems.filter((item) => item.available);
@@ -498,7 +620,7 @@ function PublicHome({ menuItems, onMenu, onLogin, onRegister, signedIn = false }
     <main>
       <section className="landing-hero" id="home">
         <div className="landing-copy"><div className="landing-eyebrow"><span /> YOUR LITTLE CORNER OF CALM</div><h1>A little pause<br />in a <em>full</em> day.</h1><p>Thoughtful coffee, something lovely to eat, and a moment that belongs just to you. There's always room to pause at Befilled.</p><div className="landing-actions"><button className="landing-primary" onClick={onMenu}>Explore the menu <ArrowRight size={16} /></button><button className="landing-secondary" onClick={onLogin}><LockKeyhole size={15} /> {signedIn ? "My orders" : "Member log in"}</button></div><div className="landing-social-proof"><div className="proof-avatars"><span>M</span><span>L</span><span>A</span></div><p><strong>A neighborhood favorite</strong><br />Made with much care and much love.</p></div></div>
-        <div className="landing-art" aria-label="A warm cup of coffee"><div className="landing-sun" /><div className="landing-orbit orbit-one" /><div className="landing-orbit orbit-two" /><div className="landing-cup">☕</div><div className="landing-art-label"><Sparkles size={14} /> SLOW SIPS, SOFT MOMENTS</div><div className="landing-sticker"><span>TAKE IT</span><em>easy</em><i aria-hidden="true">✦</i></div></div>
+        <div className="landing-art" aria-label="A warm cup of coffee"><div className="landing-sun" /><div className="landing-orbit orbit-one" /><div className="landing-orbit orbit-two" /><div className="landing-cup"><CupIllustration /></div><div className="landing-art-label"><Sparkles size={14} /> SLOW SIPS, SOFT MOMENTS</div><div className="landing-sticker"><span>TAKE IT</span><em>easy</em><i aria-hidden="true">✦</i></div></div>
         <div className="hero-bottom-line"><span>MANILA, PHILIPPINES</span><span>GOOD COFFEE. GENTLE MOMENTS.</span></div>
       </section>
       <section className="landing-menu-section" id="menu"><div className="landing-section-heading"><div><div className="landing-eyebrow">TODAY'S THREE PICKS</div><h2>Made for your <em>moment.</em></h2></div><button onClick={onMenu}>View the full menu <ArrowRight size={15} /></button></div><div className="landing-menu-grid">{highlights.map((item) => <MenuPreviewCard item={item} onZoom={setZoomItem} key={item._id} />)}</div></section>
@@ -506,11 +628,11 @@ function PublicHome({ menuItems, onMenu, onLogin, onRegister, signedIn = false }
       <section className="visit-section" id="visit"><div><div className="landing-eyebrow">COME ON IN</div><h2>Your seat is <em>waiting.</em></h2><p>Find a cozy spot, bring a friend, or enjoy a little time to yourself.</p></div><div className="visit-details"><div><MapPin size={18} /><span><b>Find us</b><small>123 Kapehan Street, Barangay Ligaya, Manila, Philippines</small></span></div><div><ClockIcon size={18} /><span><b>We're open</b><small>Every day · 7:30 AM – 9:00 PM</small></span></div></div><a className="visit-button" href="mailto:hello@befilled.cafe">Say hello <ArrowRight size={15} /></a></section>
     </main>
     <footer className="public-footer"><a className="footer-wordmark" href="#home">befilled</a><p>'Tis not a small thing to pause.</p><span>© 2026 BEFILLED CAFE</span><button onClick={onLogin}>{signedIn ? "My orders" : "Log in"}</button></footer>
-    {zoomItem && <MenuZoom item={zoomItem} onClose={() => setZoomItem(null)} />}
+    {zoomItem && <MenuZoom item={zoomItem} signedIn={signedIn} onOrder={() => onOrderItem(zoomItem)} onClose={() => setZoomItem(null)} />}
   </div>;
 }
 
-function PublicMenu({ menuItems, category, setCategory, onHome, onSection, onLogin, signedIn = false }) {
+function PublicMenu({ menuItems, category, setCategory, onHome, onSection, onLogin, onOrderItem, signedIn = false }) {
   const [zoomItem, setZoomItem] = useState(null);
   const categories = ["All", ...new Set(menuItems.map((item) => item.category))];
   const filteredItems = menuItems.filter((item) =>
@@ -535,20 +657,20 @@ function PublicMenu({ menuItems, category, setCategory, onHome, onSection, onLog
       <div className="menu-bottom-cta"><span>'Tis not a small thing to pause.</span><button onClick={onLogin}>{signedIn ? "My account & orders" : "Log in to place an order"} <ArrowRight size={15} /></button></div>
     </main>
     <footer className="public-footer"><button className="footer-wordmark footer-home-link" onClick={onHome}>befilled</button><p>'Tis not a small thing to pause.</p><span>© 2026 BEFILLED CAFE</span><button onClick={onLogin}>{signedIn ? "My orders" : "Log in"}</button></footer>
-    {zoomItem && <MenuZoom item={zoomItem} onClose={() => setZoomItem(null)} />}
+    {zoomItem && <MenuZoom item={zoomItem} signedIn={signedIn} onOrder={() => onOrderItem(zoomItem)} onClose={() => setZoomItem(null)} />}
   </div>;
 }
 
 function MenuPreviewCard({ item, onZoom }) {
   return <article className={`landing-menu-card ${item.available ? "" : "preview-sold-out"}`}>
     <button className="landing-menu-art menu-art-zoom" onClick={() => onZoom(item)} aria-label={`Zoom in on ${item.name}`}>
-      <span>{item.image || "☕"}</span><small>{item.category}</small><i>{item.available ? "Click to zoom" : "Sold out · click to view"}</i>
+      <MenuPhoto item={item} /><small>{item.category}</small><i>{item.available ? "Click to zoom" : "Sold out · click to view"}</i>
     </button>
     <div className="landing-menu-info"><div><h3>{item.name}</h3><p>{item.description}</p></div><b>{money(item.price)}</b></div>
   </article>;
 }
 
-function MenuZoom({ item, onClose }) {
+function MenuZoom({ item, onClose, onOrder, signedIn }) {
   useEffect(() => {
     function handleKeyDown(event) {
       if (event.key === "Escape") onClose();
@@ -560,8 +682,9 @@ function MenuZoom({ item, onClose }) {
   return <div className="menu-zoom-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }} onKeyDown={(event) => { if (event.key === "Escape") onClose(); }}>
     <div className="menu-zoom-card" role="dialog" aria-modal="true" aria-label={`${item.name} preview`}>
       <button className="menu-zoom-close" onClick={onClose} aria-label="Close preview"><X size={19} /></button>
-      <div className="menu-zoom-art"><span>{item.image || "☕"}</span></div>
+      <div className="menu-zoom-art"><MenuPhoto item={item} alt={`${item.name} menu photo`} /></div>
       <div className="landing-eyebrow">{item.category}</div><h2>{item.name}</h2><p>{item.description}</p><strong>{money(item.price)}</strong>
+      <button className="menu-order-button" onClick={onOrder} disabled={!item.available}>{item.available ? signedIn ? "Order this" : "Log in or create an account to order" : "Currently unavailable"} <ArrowRight size={15} /></button>
     </div>
   </div>;
 }
@@ -585,7 +708,7 @@ function AuthPage({ mode, audience, demoMode, setMode, setAudience, error, busy,
         </form>
         <div className="auth-switch">{registering ? "Already have an account?" : "New to Befilled?"}<button onClick={() => setMode(registering ? "login" : "register")}>{registering ? "Log in" : "Create an account"}</button></div>
       </div>
-      <aside className="auth-aside"><div className="auth-aside-art">☕</div><div className="landing-eyebrow">YOUR LITTLE MOMENT, ONLINE TOO</div><h2>Good things take<br /><em>a little time.</em></h2><p>Order a favorite, find your usual, and let us make your day a little warmer.</p><span>BEFILLED CAFE · MANILA, PHILIPPINES</span></aside>
+      <aside className="auth-aside"><div className="auth-aside-art"><CupIllustration /></div><div className="landing-eyebrow">YOUR LITTLE MOMENT, ONLINE TOO</div><h2>Good things take<br /><em>a little time.</em></h2><p>Order a favorite, find your usual, and let us make your day a little warmer.</p><span>BEFILLED CAFE · MANILA, PHILIPPINES</span></aside>
     </div>
   </div>;
 }
@@ -599,7 +722,7 @@ function CustomerHome({ user, menuItems, demoMode, orders, cart, setCart, notice
     <header className="customer-header"><a className="public-logo" href="#customer-home"><span>befilled</span><small>'Tis not a small thing to pause.</small></a><button className="customer-profile-trigger" onClick={() => setProfileOpen(true)} aria-label="Open your profile"><span className="top-avatar">{user.name.charAt(0).toUpperCase()}</span><span className="customer-welcome">A little hello, <strong>{user.name.split(" ")[0]}</strong></span></button><button className="customer-logout" onClick={onLogout}>Log out</button></header>
     <main className="customer-main" id="customer-home"><div className="customer-page-layout"><nav className="customer-side-nav" aria-label="Customer page navigation"><span className="customer-side-nav-label">YOUR SPACE</span><button onClick={onHome}>Home</button><button onClick={onMenu}>Our menu</button><button className="customer-account-link" onClick={showOrders}>My orders</button></nav><div className="customer-content">{demoMode && <div className="demo-mode-note customer-demo-note" role="status">Browser-only demo: your account and orders are saved on this device only.</div>}<div className="landing-eyebrow">YOUR LITTLE CORNER OF CALM</div><h1>What sounds <span className="customer-heading-highlight"><em>lovely</em><span className="customer-heading-question">?</span></span></h1><p className="customer-intro">Choose a favorite for takeaway. We'll have it ready for your pause.</p>
       {notice && <div className="customer-notice">{notice}</div>}
-      <div className="customer-order-layout"><section className="customer-menu-list"><div className="landing-menu-grid">{availableItems.map((item) => <article className="landing-menu-card" key={item._id}><div className="landing-menu-art"><span>{item.image || "☕"}</span><small>{item.category}</small></div><div className="landing-menu-info"><div><h3>{item.name}</h3><p>{item.description}</p></div><b>{money(item.price)}</b></div><div className="customer-item-add"><span>Quantity</span><div><button onClick={() => setCart((prev) => ({ ...prev, [item._id]: Math.max(0, Number(prev[item._id] || 0) - 1) }))}>−</button><b>{cart[item._id] || 0}</b><button onClick={() => setCart((prev) => ({ ...prev, [item._id]: Math.min(50, Number(prev[item._id] || 0) + 1) }))}>+</button></div></div></article>)}</div></section>
+      <div className="customer-order-layout"><section className="customer-menu-list"><div className="landing-menu-grid">{availableItems.map((item) => <article className="landing-menu-card" key={item._id}><div className="landing-menu-art"><MenuPhoto item={item} alt={`${item.name} menu photo`} /><small>{item.category}</small></div><div className="landing-menu-info"><div><h3>{item.name}</h3><p>{item.description}</p></div><b>{money(item.price)}</b></div><div className="customer-item-add"><span>Quantity</span><div><button onClick={() => setCart((prev) => ({ ...prev, [item._id]: Math.max(0, Number(prev[item._id] || 0) - 1) }))}>−</button><b>{cart[item._id] || 0}</b><button onClick={() => setCart((prev) => ({ ...prev, [item._id]: Math.min(50, Number(prev[item._id] || 0) + 1) }))}>+</button></div></div></article>)}</div></section>
         <aside className="customer-cart"><div className="landing-eyebrow">YOUR LITTLE ORDER</div><h2>Takeaway bag</h2>{availableItems.filter((item) => cart[item._id] > 0).length === 0 ? <p className="cart-empty">A little something could go here.</p> : availableItems.filter((item) => cart[item._id] > 0).map((item) => <div className="cart-line" key={item._id}><span>{cart[item._id]}× {item.name}</span><b>{money(item.price * cart[item._id])}</b></div>)}<div className="cart-total"><span>Total</span><strong>{money(cartTotal)}</strong></div><button className="auth-submit" onClick={onOrder} disabled={busy || cartTotal === 0}>{busy ? "Placing your order..." : "Place takeaway order"} <ArrowRight size={15} /></button><small>We'll prepare it fresh for you at the cafe.</small></aside></div>
       <section className="customer-history" id="customer-orders"><div className="landing-eyebrow">YOUR PAST PAUSES</div><h2>Order history</h2>{orders.length === 0 ? <p>Your orders will show up here.</p> : orders.map((order) => <article className="customer-order-row" key={order._id}><div><strong>{order.orderNumber}</strong><small>{new Date(order.createdAt).toLocaleString("en-PH", { dateStyle: "medium", timeStyle: "short" })}</small></div><span>{order.items.map((item) => `${item.quantity}× ${item.name}`).join(", ")}</span><b>{money(order.total)}</b><em className={`history-${order.status.toLowerCase()}`}>{order.status}</em></article>)}</section>
     </div></div></main><footer className="public-footer"><a className="footer-wordmark" href="#customer-home">befilled</a><p>'Tis not a small thing to pause.</p><span>© 2026 BEFILLED CAFE</span></footer>
@@ -876,7 +999,7 @@ function ManagementApp({ user, browserDemoMode, onLogout }) {
           {page === "Menu" && <section>
             <div className="page-heading"><div><div className="eyebrow">YOUR LITTLE MENU</div><h1>Menu <span>management</span></h1><p>Good things, made with a little extra love.</p></div><button className="primary-button" onClick={() => setModal({ kind: "menu", record: { name: "", category: "Coffee", price: "", description: "", available: true, image: "☕" } })}><Plus size={17} /> Add menu item</button></div>
             <div className="toolbar"><div className="search-box"><Search size={17} /><input placeholder="Search your menu..." value={query} onChange={(e) => setQuery(e.target.value)} /></div><div className="filter-box"><SlidersHorizontal size={16} /><select value={category} onChange={(e) => setCategory(e.target.value)}><option>All items</option>{[...new Set(menuItems.map((item) => item.category))].map((c) => <option key={c}>{c}</option>)}</select></div><span className="result-count">{filteredMenu.length} items</span></div>
-            <div className="menu-grid">{filteredMenu.map((item) => <article className={`menu-card ${!item.available ? "unavailable" : ""}`} key={item._id}><div className="menu-card-art"><span>{item.image || "☕"}</span><button className="dots-button" onClick={() => setModal({ kind: "menu", record: item })} aria-label={`Edit ${item.name}`}><MoreHorizontal size={19} /></button>{!item.available && <span className="unavailable-label">SOLD OUT</span>}</div><div className="menu-card-info"><div className="menu-category">{item.category}</div><div className="menu-title-row"><h3>{item.name}</h3><span>{money(item.price)}</span></div><p>{item.description || "A little something to brighten your day."}</p><div className="menu-card-actions"><span className={`availability ${item.available ? "is-available" : ""}`}><i />{item.available ? "Available" : "Unavailable"}</span><div><button onClick={() => setModal({ kind: "menu", record: item })} aria-label={`Edit ${item.name}`}><Pencil size={15} /></button><button onClick={() => setConfirmDelete({ kind: "menu", item })} aria-label={`Delete ${item.name}`}><Trash2 size={15} /></button></div></div></div></article>)}
+            <div className="menu-grid">{filteredMenu.map((item) => <article className={`menu-card ${!item.available ? "unavailable" : ""}`} key={item._id}><div className="menu-card-art"><MenuPhoto item={item} alt={`${item.name} menu photo`} /><button className="dots-button" onClick={() => setModal({ kind: "menu", record: item })} aria-label={`Edit ${item.name}`}><MoreHorizontal size={19} /></button>{!item.available && <span className="unavailable-label">SOLD OUT</span>}</div><div className="menu-card-info"><div className="menu-category">{item.category}</div><div className="menu-title-row"><h3>{item.name}</h3><span>{money(item.price)}</span></div><p>{item.description || "A little something to brighten your day."}</p><div className="menu-card-actions"><span className={`availability ${item.available ? "is-available" : ""}`}><i />{item.available ? "Available" : "Unavailable"}</span><div><button onClick={() => setModal({ kind: "menu", record: item })} aria-label={`Edit ${item.name}`}><Pencil size={15} /></button><button onClick={() => setConfirmDelete({ kind: "menu", item })} aria-label={`Delete ${item.name}`}><Trash2 size={15} /></button></div></div></div></article>)}
               {filteredMenu.length === 0 && <EmptyState title="Nothing on the menu yet" text="Add a menu item to get things brewing." />}</div>
           </section>}
           {page === "Inventory" && <section>
@@ -1008,7 +1131,7 @@ function Overview({ sales, todayOrders, menuItems, inventory, lowStock, orders, 
   const best = menuItems.slice(0, 3);
   return <section>
     <div className="welcome-row"><div><div className="eyebrow">{dateLabel.toUpperCase()}, AT A GLANCE</div><h1>Good morning, {user.name.split(" ")[0]} <span>☀</span></h1><p>Here's what's brewing at Befilled today.</p></div><div className="open-badge"><span />We're open <b>·</b> until 9:00 PM</div></div>
-    <div className="hero-card"><div className="hero-copy"><div className="hero-kicker"><span /> TODAY'S LITTLE REMINDER</div><h2><em>'Tis</em> not a small thing<br />to <em>pause.</em></h2><p>Take a breath, make a coffee, and make<br className="desktop-break" /> someone's day a little warmer.</p><button onClick={() => onNavigate("Menu")}>Explore today's menu <span>↗</span></button></div><div className="hero-image"><div className="hero-circle"><div className="cup">☕</div><span className="steam">〰</span></div><span className="hero-sticker">take it<br /><em>slow</em> today</span></div><div className="hero-caption">A MOMENT, JUST FOR YOU &nbsp; · &nbsp; 01 / 04</div></div>
+    <div className="hero-card"><div className="hero-copy"><div className="hero-kicker"><span /> TODAY'S LITTLE REMINDER</div><h2><em>'Tis</em> not a small thing<br />to <em>pause.</em></h2><p>Take a breath, make a coffee, and make<br className="desktop-break" /> someone's day a little warmer.</p><button onClick={() => onNavigate("Menu")}>Explore today's menu <span>↗</span></button></div><div className="hero-image"><div className="hero-circle"><CupIllustration /></div><span className="hero-sticker">take it<br /><em>slow</em> today</span></div><div className="hero-caption">A MOMENT, JUST FOR YOU &nbsp; · &nbsp; 01 / 04</div></div>
     <div className="section-title-row"><div><div className="eyebrow">THE DAILY POUR</div><h2>Today's overview</h2></div><span className="muted-today"><Clock3 size={15} /> Updates in real time</span></div>
     <div className="stats-grid">
       <StatCard label="Today's sales" value={money(sales)} change="+12.8%" icon={CircleDollarSign} trend="vs. yesterday" />
@@ -1018,7 +1141,7 @@ function Overview({ sales, todayOrders, menuItems, inventory, lowStock, orders, 
     </div>
     <div className="overview-lower">
       <div className="table-card recent-orders"><div className="card-heading"><div><div className="eyebrow">FRESH FROM THE COUNTER</div><h3>Recent orders</h3></div><button className="text-button" onClick={() => onNavigate("Orders")}>View all <span>→</span></button></div><table><thead><tr><th>ORDER</th><th>CUSTOMER</th><th>ITEMS</th><th>TOTAL</th><th>STATUS</th></tr></thead><tbody>{orders.slice(0, 4).map((order) => <tr key={order._id}><td className="order-id">{order.orderNumber}</td><td>{order.customer}</td><td>{order.items?.reduce((sum, item) => sum + Number(item.quantity || 1), 0) || 1} items</td><td><strong>{money(order.total)}</strong></td><td><OrderStatus order={order} onStatus={onStatus} /></td></tr>)}</tbody></table></div>
-      <div className="side-stack"><div className="top-picks card-panel"><div className="card-heading"><div><div className="eyebrow">A LITTLE SOMETHING</div><h3>Menu favorites</h3></div><Coffee size={18} /></div>{best.map((item, index) => <div className="pick-row" key={item._id}><span className="pick-emoji">{item.image || "☕"}</span><div><strong>{item.name}</strong><small>{index === 0 ? "A customer favorite" : item.category}</small></div><b>{money(item.price)}</b></div>)}</div><div className={`stock-note card-panel ${lowStock.length ? "needs-restock" : ""}`}><div className="stock-note-icon">{lowStock.length ? <AlertTriangle size={18} /> : <Leaf size={19} />}</div><div><strong>{lowStock.length ? "A little restock needed" : "Your stock is looking good"}</strong><p>{lowStock.length ? `${lowStock[0].name} is running low.` : "All the essentials are ready to go."}</p></div><button onClick={() => onNavigate("Inventory")} aria-label="View inventory">→</button></div></div>
+      <div className="side-stack"><div className="top-picks card-panel"><div className="card-heading"><div><div className="eyebrow">A LITTLE SOMETHING</div><h3>Menu favorites</h3></div><Coffee size={18} /></div>{best.map((item, index) => <div className="pick-row" key={item._id}><MenuPhoto item={item} alt={`${item.name} menu photo`} className="pick-photo" /><div><strong>{item.name}</strong><small>{index === 0 ? "A customer favorite" : item.category}</small></div><b>{money(item.price)}</b></div>)}</div><div className={`stock-note card-panel ${lowStock.length ? "needs-restock" : ""}`}><div className="stock-note-icon">{lowStock.length ? <AlertTriangle size={18} /> : <Leaf size={19} />}</div><div><strong>{lowStock.length ? "A little restock needed" : "Your stock is looking good"}</strong><p>{lowStock.length ? `${lowStock[0].name} is running low.` : "All the essentials are ready to go."}</p></div><button onClick={() => onNavigate("Inventory")} aria-label="View inventory">→</button></div></div>
     </div>
     <div className="bottom-note"><span>✳</span> A small pause can make a big difference. Make someone's day today.</div>
   </section>;

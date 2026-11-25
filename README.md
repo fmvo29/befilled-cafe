@@ -64,6 +64,8 @@ The API starts on port `5000`; Vite forwards `/api` requests to it. Local per-br
 - Responsive layout for desktop and mobile
 - Browser-only demo authentication and ordering for development without MongoDB; database-backed accounts, orders, and management require the API and MongoDB to be configured
 
+Menu cards use locally bundled Unsplash sample photos, with a different photo for each starter menu item and the original menu emoji retained as an image-load fallback. Public menu previews include an order action; guests are asked to sign in or create an account before ordering. Replace the sample stock photos with original cafe photography before production.
+
 ## API
 
 - `POST /api/auth/register` (customer only), `POST /api/auth/login`, `GET /api/auth/me`, `POST /api/auth/logout`
