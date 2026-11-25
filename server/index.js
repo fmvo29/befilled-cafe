@@ -137,9 +137,16 @@ app.post("/api/auth/register", authLimiter, asyncRoute(async (req, res) => {
 app.post("/api/auth/login", authLimiter, asyncRoute(async (req, res) => {
   const email = typeof req.body.email === "string" ? req.body.email.trim().toLowerCase() : "";
   const password = typeof req.body.password === "string" ? req.body.password : "";
+  const accountType = req.body.accountType;
+  if (accountType !== undefined && !["staff", "customer"].includes(accountType)) {
+    return res.status(400).json({ message: "Choose a valid account type." });
+  }
   const user = await User.findOne({ email }).select("+passwordHash");
   if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
     return res.status(401).json({ message: "That email and password don't match." });
+  }
+  if (accountType && user.role !== accountType) {
+    return res.status(403).json({ message: accountType === "staff" ? "This account doesn't have staff access." : "Use Staff / Admin sign in for this account." });
   }
   createSession(user, res);
   res.json({ user: { id: user._id, name: user.name, email: user.email, role: user.role } });

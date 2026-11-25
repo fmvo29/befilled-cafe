@@ -9,7 +9,7 @@ The public homepage uses the fictional sample address 123 Kapehan Street, Barang
 - Node.js 18 or newer
 - MongoDB Community Server running locally, or a MongoDB Atlas connection string
 
-## Run locally
+## Run a browser-only demo
 
 1. Install dependencies from the project root:
 
@@ -17,31 +17,37 @@ The public homepage uses the fictional sample address 123 Kapehan Street, Barang
    npm install
    ```
 
-2. Copy `.env.example` to `.env`. Configure `MONGODB_URI`, then set a random `JWT_SECRET` of at least 32 characters. For example, generate one with:
-
-   ```sh
-   node -e "console.log(require('node:crypto').randomBytes(48).toString('hex'))"
-   ```
-
-3. Set `STAFF_ADMIN_EMAIL` and `STAFF_ADMIN_PASSWORD` in `.env` to provision the initial staff login. Use a unique email and a password of at least 10 characters. The password is stored as a bcrypt hash. Staff accounts cannot be created through public registration.
-
-4. Populate the MongoDB menu with the cafe starter items and rename the original sample drinks/pastries to their new menu names:
-
-   ```sh
-   npm run seed:menu --workspace server
-   ```
-
-   This is safe to rerun: matching starter items are refreshed and missing items are added without deleting other menu entries.
-
-5. Start the API and frontend:
+2. Start the frontend:
 
    ```sh
    npm run dev
    ```
 
-6. Open the Vite URL shown in the terminal (usually `http://localhost:5173`). Visitors start on the public cafe home page. Customers can register; staff sign in using the configured staff account.
+3. Open the Vite URL shown in the terminal (usually `http://localhost:5173`). Create an account and try the customer ordering flow.
 
-The API starts on port `5000`. Vite forwards `/api` requests to it. MongoDB must be running before the API can start.
+During development, the site uses browser-only demo mode automatically. Customer demo accounts and orders stay in that browser's local storage; passwords are stored as salted PBKDF2 hashes. Customers can open their profile to update their name, email, or password, or delete their account and its local order history. Nothing is sent to MongoDB.
+
+To try the staff dashboard, choose **Staff / Admin** on the login page and use `admin@befilled.cafe` with password `PauseWithCare2026!`. This is a public demo login, not a secure real admin account. Dashboard menu, inventory, and order changes are saved only in the current browser.
+
+Admins cannot edit customer profiles. Admin profile changes and deletion are owner-only operations and stay disabled until secure server-side owner-key verification is configured; a key checked only in browser code would not provide real protection.
+
+## Connect MongoDB later
+
+1. Copy `.env.example` to `.env` and configure `MONGODB_URI`, `JWT_SECRET` (at least 32 random characters), and the initial staff account credentials. Staff accounts are provisioned by the cafe administrator and cannot be publicly registered.
+2. Create `client/.env.local` with `VITE_USE_DATABASE=true`.
+3. Populate the MongoDB menu:
+
+   ```sh
+   npm run seed:menu --workspace server
+   ```
+
+4. Start both the API and frontend:
+
+   ```sh
+   npm run dev:full
+   ```
+
+The API starts on port `5000`; Vite forwards `/api` requests to it. Local per-browser demo accounts and orders are separate from MongoDB. To start fresh in demo mode, clear the `befilled-demo-users`, `befilled-demo-session`, and `befilled-demo-orders` entries in browser local storage.
 
 ## Features
 
@@ -56,7 +62,7 @@ The API starts on port `5000`. Vite forwards `/api` requests to it. MongoDB must
 - Menu CRUD: add, search, filter, edit, and remove items
 - Inventory CRUD: add, search, edit, and remove stock; items at or below their reorder quantity are flagged
 - Responsive layout for desktop and mobile
-- Public menu highlights use sample content if the API is unavailable. Account creation, login, and order placement require MongoDB and the API to be running.
+- Browser-only demo authentication and ordering for development without MongoDB; database-backed accounts, orders, and management require the API and MongoDB to be configured
 
 ## API
 
